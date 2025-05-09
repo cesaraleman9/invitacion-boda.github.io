@@ -202,33 +202,20 @@
     }
 
     $(document).ready(function() {
-  rellenarSelect();
+      rellenarSelect();
 
-  $('#Nombre').on('change', function () {
-    mostrarLugares();
-  });
+      $('#Nombre').on('change', function () {
+        mostrarLugares();
+      });
 
-  $('#rsvp-form').on('submit', function(e) {
-    // Prevenir el envío tradicional del formulario
-    e.preventDefault();
-
-    // Hacer la solicitud AJAX para enviar los datos sin recargar la página
-    $.ajax({
-      url: $(this).attr('action'),  // La URL a la que se enviarán los datos
-      type: 'POST',
-      data: $(this).serialize(),  // Serialize los datos del formulario
-      success: function(response) {
-        // Aquí puedes manejar la respuesta del servidor, por ejemplo, mostrar el mensaje de agradecimiento
-        $('#thank-you-message').fadeIn();
-        $('#rsvp-form').fadeOut();
-      },
-      error: function() {
-        // Si ocurre algún error, puedes manejarlo aquí
-        alert("Hubo un problema al enviar el formulario. Por favor, inténtalo nuevamente.");
-      }
+      $('#rsvp-form').on('submit', function(e) {
+        
+        setTimeout(() => {
+          $('#thank-you-message').fadeIn();
+          $('#rsvp-form').fadeOut();
+        }, 500);
+      });
     });
-  });
-});
   </script>
 </body>
 </html>
