@@ -73,7 +73,7 @@
       background-color: #0b5ed7;
     }
 
-    .thank-you {
+   /*  .thank-you {
       display: none;
       font-size: 1.2rem;
       color: green;
@@ -81,7 +81,7 @@
       margin-top: 1rem;
       animation: fadeIn 0.6s ease-in-out;
     }
-
+ */
     .info-text {
       font-size: 0.95rem;
       color: #0d6efd;
@@ -122,28 +122,32 @@
               <p id="lugaresInfo" class="info-text mt-2"></p>
             </div>
 
+          
             <div class="mb-3 text-start">
               <label for="asistencia" class="form-label">¿Asistirás a la boda?</label>
               <select class="form-select" id="asistencia" name="asistencia" required>
                 <option value="" selected disabled>Selecciona una opción</option>
-                <option value="sí">Sí</option>
-                <option value="no">No</option>
+                <option value="1">Sí</option>
+                <option value="0">No</option>
               </select>
             </div>
+          
 
+          <div id="asistencia-container" style="display: none;">
             <div class="mb-4 text-start">
               <label for="Asistentes" class="form-label">¿Cuántas personas te acompañarán? (Incluyéndote)</label>
               <select class="form-select" id="Asistentes" name="Asistentes" required>
                 <option value="" selected disabled>Selecciona un nombre primero</option>
               </select>
             </div>
+          </div>
 
             <button type="submit" class="btn btn-modern w-100">Confirmar</button>
           </form>
 
-          <div id="thank-you-message" class="thank-you">
+        <!--   <div id="thank-you-message" class="thank-you">
             ¡Gracias por confirmar tu asistencia! 💕
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -167,39 +171,46 @@
     };
 
     function rellenarSelect() {
-      const select = document.getElementById('Nombre');
-      select.innerHTML = '<option value="" disabled selected>Selecciona un invitado</option>';
+  const select = document.getElementById('Nombre');
+  select.innerHTML = '<option value="" disabled selected>Selecciona un invitado</option>';
 
-      Object.keys(invitados).forEach(nombre => {
-        const option = document.createElement('option');
-        option.value = nombre;
-        option.textContent = nombre;
-        select.appendChild(option);
-      });
+  Object.keys(invitados).forEach(nombre => {
+    const option = document.createElement('option');
+    option.value = nombre;
+    option.textContent = nombre;
+    select.appendChild(option);
+  });
 
-      $('#Nombre').select2();
+  $('#Nombre').select2({
+    width: '100%' // Solución aquí
+  });
+}
+
+
+function mostrarLugares() {
+  const nombre = $('#Nombre').val();
+  const lugaresInfo = document.getElementById('lugaresInfo');
+  const asistentes = document.getElementById('Asistentes');
+  const nombreCampo = document.getElementById('nombreCampo');
+
+  // Limpiar campos relacionados
+  $('#asistencia').val('').change();
+  asistentes.innerHTML = '<option value="" disabled selected>Selecciona una cantidad</option>';
+  $('#Asistentes').val('').change();
+
+  nombreCampo.value = nombre;
+
+  if (invitados[nombre]) {
+    const n = invitados[nombre];
+    lugaresInfo.textContent = `Tienes ${n} lugares reservados.`;
+    for (let i = 0; i <= n; i++) {
+      asistentes.innerHTML += `<option value="${i}">${i}</option>`;
     }
+  } else {
+    lugaresInfo.textContent = "Nombre no reconocido.";
+  }
+}
 
-    function mostrarLugares() {
-      const nombre = $('#Nombre').val();
-      const lugaresInfo = document.getElementById('lugaresInfo');
-      const asistentes = document.getElementById('Asistentes');
-      const nombreCampo = document.getElementById('nombreCampo');
-
-      nombreCampo.value = nombre;
-
-      if (invitados[nombre]) {
-        const n = invitados[nombre];
-        lugaresInfo.textContent = `Tienes ${n} lugares reservados.`;
-        asistentes.innerHTML = '<option value="" disabled selected>Selecciona una cantidad</option>';
-        for (let i = 0; i <= n; i++) {
-          asistentes.innerHTML += `<option value="${i}">${i}</option>`;
-        }
-      } else {
-        lugaresInfo.textContent = "Nombre no reconocido.";
-        asistentes.innerHTML = '<option value="0">0</option>';
-      }
-    }
 
     $(document).ready(function() {
       rellenarSelect();
@@ -208,10 +219,21 @@
         mostrarLugares();
       });
 
+      $('#asistencia').on('change', function () {
+        const asistira = $('#asistencia').val();
+        if(asistira=="0"){
+          $('#Asistentes').empty();
+
+// Agregamos la opción por defecto nuevamente
+$('#Asistentes').append('<option value="" selected disabled>Selecciona un nombre primero</option>');
+
+        }
+        asistira=="1" ?  $('#asistencia-container').show() :  $('#asistencia-container').hide();
+      });
+
       $('#rsvp-form').on('submit', function(e) {
-        
         setTimeout(() => {
-          $('#thank-you-message').fadeIn();
+          /* $('#thank-you-message').fadeIn(); */
           $('#rsvp-form').fadeOut();
         }, 500);
       });
