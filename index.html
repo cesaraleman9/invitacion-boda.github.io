@@ -19,16 +19,22 @@
 
   <style>
     body {
-      background: linear-gradient(135deg, #f8f9fa, #e3f2fd);
+      background: linear-gradient(135deg, #f0f4ff, #e0ecff);
       font-family: 'Poppins', sans-serif;
+      padding-top: 2rem;
     }
 
     .rsvp-card {
       border-radius: 2rem;
-      background-color: white;
+      background-color: #ffffff;
       padding: 3rem 2rem;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
       animation: fadeIn 0.8s ease-in-out;
+      transition: transform 0.3s ease;
+    }
+
+    .rsvp-card:hover {
+      transform: translateY(-5px);
     }
 
     @keyframes fadeIn {
@@ -38,7 +44,7 @@
 
     .rsvp-title {
       font-weight: 700;
-      font-size: 2.2rem;
+      font-size: 2.3rem;
       color: #0d6efd;
       margin-bottom: 2rem;
     }
@@ -73,21 +79,11 @@
       background-color: #0b5ed7;
     }
 
-   /*  .thank-you {
-      display: none;
-      font-size: 1.2rem;
-      color: green;
-      font-weight: 600;
-      margin-top: 1rem;
-      animation: fadeIn 0.6s ease-in-out;
-    }
- */
     .info-text {
       font-size: 0.95rem;
       color: #0d6efd;
     }
 
-    /* Estilo personalizado para Select2 */
     .select2-container--default .select2-selection--single {
       height: 46px !important;
       padding: 0.5rem;
@@ -101,6 +97,11 @@
 
     .select2-container--default .select2-selection--single .select2-selection__arrow {
       height: 100%;
+    }
+
+    #checkbox-container {
+      display: none;
+      margin-top: 1rem;
     }
   </style>
 </head>
@@ -116,13 +117,14 @@
 
           <form id="rsvp-form" action="https://script.google.com/macros/s/AKfycbwbcg0HGXTZPPKAGSepg6p6R9yI-ZVCWQVlqB-bz1PZ2Azwa0FFq7Kc678uZBUtN3VZ/exec" method="POST">
             <div class="mb-3 text-start">
-              <label for="Nombre" class="form-label">Nombre de invitado</label>
-              <select id="Nombre" name="Nombre" class="form-select" required></select>
-              <input type="hidden" id="nombreCampo" name="nombreCampo" />
+              <label for="Invitado" class="form-label">Nombre del invitado</label>
+              <select id="Invitado" name="Invitado" class="form-select" required></select>
+              <input type="hidden" id="InvitadoCampo" name="InvitadoCampo" />
+              <input type="hidden" id="Reservados" name="Reservados" />
+              <input type="hidden" name="Nombres" id="Nombres">
               <p id="lugaresInfo" class="info-text mt-2"></p>
             </div>
 
-          
             <div class="mb-3 text-start">
               <label for="asistencia" class="form-label">¿Asistirás a la boda?</label>
               <select class="form-select" id="asistencia" name="asistencia" required>
@@ -131,23 +133,26 @@
                 <option value="0">No</option>
               </select>
             </div>
-          
 
-          <div id="asistencia-container" style="display: none;">
-            <div class="mb-4 text-start">
-              <label for="Asistentes" class="form-label">¿Cuántas personas te acompañarán? (Incluyéndote)</label>
-              <select class="form-select" id="Asistentes" name="Asistentes" required>
-                <option value="" selected disabled>Selecciona un nombre primero</option>
-              </select>
+            <div id="asistencia-container" style="display: none;">
+              <div class="mb-4 text-start">
+                <label for="Asistentes" class="form-label">¿Cuántas personas asistirán? (Incluyéndote)</label>
+                <select class="form-select" id="Asistentes" name="Asistentes" required>
+                  <option value="" selected disabled>Selecciona un invitado primero</option>
+                </select>
+              </div>
             </div>
-          </div>
+
+            <!-- Contenedor de los checkboxes -->
+            <div id="checkbox-container">
+              <div class="mb-3 text-start">
+                <label class="form-label">Selecciona a los asistentes:</label>
+                <div id="checkboxes"></div>
+              </div>
+            </div>
 
             <button type="submit" class="btn btn-modern w-100">Confirmar</button>
           </form>
-
-        <!--   <div id="thank-you-message" class="thank-you">
-            ¡Gracias por confirmar tu asistencia! 💕
-          </div> -->
         </div>
       </div>
     </div>
@@ -164,76 +169,276 @@
 
   <script>
     const invitados = {
-      "Familia Rodríguez Alemán": 4,
-      "Carlos Pérez": 2,
-      "Ana y Luis": 1,
-      "Familia Mondragon Alemán": 4
+      "Familia Rodríguez Alemán": 2,
+      "Familia Lazaro Sandoval": 6,
+      "Familia Rodríguez Fierro": 2,
+      "Antonio Sandoval Ávila": 1,
+      "Familia De Los Santos Sandoval": 3,
+      "Familia Velasco Sandoval": 4,
+      "Familia Sandoval Cruz": 3,
+      "Familia Sandoval Calles ": 2,
+      "Familia Ferreira ": 2,
+      "Familia Muse": 2,
+      "Familia Sandoval López": 2,
+      "Familia Sandoval Serrano": 2,
+      "Familia Sandoval Medrano": 2,
+      "Familia Sandoval Carachure": 4,
+      "Hiram Lazaro Ramirez": 1,
+      "Familia Lazaro Romero": 2,
+      "Familia Lazaro Vargas": 2,
+      "Familia Hernandez Lazaro": 2,
+
+      "Familia Estrada Alemán": 2,
+      "Familia Martínez Estrada": 2,
+      "Familia Medina Estrada": 2,
+      "Familia Durán Estrada": 2,
+      "Familia Velasco Alemán": 3,
+      "Familia Mendez Velasco": 2,
+      "Familia Mondragon Alemán": 3,
+      "Familia Mondragon Omaña": 2,
+      "Familia Mendez Alemán": 3,
+      "Ivan Mendez": 2,
+      "Familia Alemán Infante": 5,
+      "Gonzalo Alemán": 1,
+      "Ruth Alemán": 1,
+      "Familia Rodríguez Antonio": 2,
+      "Familia Rodriguez Rodríguez": 2,
+      "Familia Rodríguez Robles": 2,
+      "Alejandra Robles": 1,
+      "Ivette Rodríguez": 2,
+      "Familia Rodríguez Gomez": 3,
+      "Familia Neira Ramirez": 2,
+
+  "Antonio Hernandez": 1,
+  "Ismael Acuña": 1,
+  "Andrea Garduño y Tito": 2,
+  "Christian Arvizu": 1,
+  "Javier Guichard": 1,
+  "David Guichard": 1,
+  "Samuel Torres": 1,
+  "Karla Gil": 1,
+  "Eduardo Bejarano": 2,
+  "Luis Montalvo": 2,
+  "Harry Vargas": 2,
+  "Mauricio Neira": 1,
+  "Karla Villegas": 1,
+  "Jared Torres": 2,
+  "Jared Velazquez": 1,
+  "Jorge Tellez y Saraí Espinoza": 2,
+  "Aldon Lewis": 1,
+  "Keston Roberts": 1,
+  "Micaiah Illidge": 1,
+  "Jessica Burelo y Carlos Quiroz": 2,
+  "Susana Serrano": 1,
+  "Cristina Ríos y Humberto Chavez": 2,
+  "Jairo Díaz y Sarah Díaz": 2,
+  "Baneli Mendoza y Juan Ocampo": 2,
+  "Liz Ríos": 1,
+  "Brisaida Velazquez": 1,
+  "Yuleidi Ramirez": 1
     };
 
+    const nombresAcompanantes = {
+  "Familia Rodríguez Alemán": ["Beatriz", "Raúl"],
+  "Familia Lazaro Sandoval": ["Fabiola", "Ervey", "Ervey Jr", "Marisol", "Daiana", "Emily"],
+  "Familia Rodríguez Fierro": ["Raúl", "Ivette"],
+  "Antonio Sandoval Ávila": ["Antonio Sandoval Ávila"],
+  "Familia De Los Santos Sandoval": ["Irma", "Josué", "Josué (Hijo)"],
+  "Familia Velasco Sandoval": ["Betty", "Armando", "Armando (Hijo)", "Regina"],
+  "Familia Sandoval Cruz": ["Sara", "Josselin", "Karen"],
+  "Familia Sandoval Calles ": ["Brayan", "Jaris", "bebé"],
+  "Familia Ferreira ": ["Beiry", "Ben", "bebé"],
+  "Familia Muse": ["Jacquelyn", "Esposo"],
+  "Familia Sandoval López": ["Antonio", "Lizania", "Aldo", "Tony", "Fernando", "Andre (bebé)"],
+  "Familia Sandoval Serrano": ["Alfredo", "Omaira", "Alfredo (Hijo)", "Valentina", "bebé"],
+  "Familia Sandoval Medrano": ["Benjamin", "Isabel", "Emiliano", "Isabela"],
+  "Familia Sandoval Carachure": ["Abel", "Ana", "Anabel", "Hija 2"],
+  "Hiram Lazaro Ramirez": ["Hiram"],
+  "Familia Lazaro Romero": ["Hiram", "Mayra"],
+  "Familia Lazaro Vargas": ["Ruben", "Pery", "Alexa", "Victoria", "Rubem (Hijo)"],
+  "Familia Hernandez Lazaro": ["Elina", "Esposo"],
+
+  "Familia Estrada Alemán": ["Paula", "Daniel"],
+  "Familia Martínez Estrada": ["Irving", "Paola", "Paulette", "Andy"],
+  "Familia Medina Estrada": ["Ilse", "Israel"],
+  "Familia Durán Estrada": ["Daniela", "Daniel"],
+  "Familia Velasco Alemán": ["Rita", "Israel", "Libni"],
+  "Familia Mendez Velasco": ["Elaine", "Joel"],
+  "Familia Mondragon Alemán": ["Miguel", "Julia", "Alan"],
+  "Familia Mondragon Omaña": ["Miguel", "Esli"],
+  "Familia Mendez Alemán": ["Ever", "Adela", "Stephanie", "Gigi"],
+  "Ivan Mendez": ["Iván", "Caro"],
+  "Familia Alemán Infante": ["Carlos", "Erika", "Angelica", "Karla", "Gonzalo"],
+  "Gonzalo Alemán": ["Abuelo Gonzalo"],
+  "Ruth Alemán": ["Ruth"],
+  "Familia Rodríguez Antonio": ["Isabel", "Paulina"],
+  "Familia Rodriguez Rodríguez": ["Freddy", "Esposa"],
+  "Familia Rodríguez Robles": ["Arturo", "Lady"],
+  "Alejandra Robles": ["Alejandra"],
+  "Ivette Rodríguez": ["Ivette"],
+  "Familia Rodríguez Gomez": ["Daniel", "Leticia", "Edson"],
+  "Familia Neira Ramirez": ["Fernando", "Ilsi"],
+
+  "Antonio Hernandez": ["Antonio"],
+  "Ismael Acuña": ["Ismael"],
+  "Andrea Garduño y Tito": ["Andrea Garduño", "Tito"],
+  "Christian Arvizu": ["Christian"],
+  "Javier Guichard": ["Javier Guichard"],
+  "David Guichard": ["David Guichard"],
+  "Samuel Torres": ["Samuel"],
+  "Karla Gil": ["Karla"],
+  "Eduardo Bejarano": ["Eduardo","Mayra"],
+  "Luis Montalvo": ["Luis","Dariana"],
+  "Harry Vargas": ["Harry","Lily"],
+  "Mauricio Neira": ["Mauricio"],
+  "Karla Villegas": ["Karla"],
+  "Jared Torres": ["Jared","Sandy"],
+  "Jared Velazquez": ["Jared"],
+  "Jorge Tellez y Saraí Espinoza": ["Jorge Tellez", "Saraí Espinoza"],
+  "Aldon Lewis": ["Aldon"],
+  "Keston Roberts": ["Keston"],
+  "Micaiah Illidge": ["Micaiah"],
+  "Jessica Burelo y Carlos Quiroz": ["Jessica Burelo", "Carlos Quiroz"],
+  "Susana Serrano": ["Susana"],
+  "Cristina Ríos y Humberto Chavez": ["Cristina Ríos", "Humberto Chavez"],
+  "Jairo Díaz y Sarah Díaz": ["Jairo Díaz", "Sarah Díaz"],
+  "Baneli Mendoza y Juan Ocampo": ["Baneli Mendoza", "Juan Ocampo"],
+  "Liz Ríos": ["Liz"],
+  "Brisaida Velazquez": ["Brisaida"],
+  "Yuleidi Ramirez": ["Yuleidi"]
+
+};
+
     function rellenarSelect() {
-  const select = document.getElementById('Nombre');
-  select.innerHTML = '<option value="" disabled selected>Selecciona un invitado</option>';
+      const select = document.getElementById('Invitado');
+      select.innerHTML = '<option value="" disabled selected>Selecciona un invitado</option>';
 
-  Object.keys(invitados).forEach(nombre => {
-    const option = document.createElement('option');
-    option.value = nombre;
-    option.textContent = nombre;
-    select.appendChild(option);
-  });
+      Object.keys(invitados).forEach(Invitado => {
+        const option = document.createElement('option');
+        option.value = Invitado;
+        option.textContent = Invitado;
+        select.appendChild(option);
+      });
 
-  $('#Nombre').select2({
-    width: '100%' // Solución aquí
+      $('#Invitado').select2({ width: '100%' });
+    }
+
+    function mostrarLugares() {
+      const Invitado = $('#Invitado').val();
+      const lugaresInfo = document.getElementById('lugaresInfo');
+      const asistentes = document.getElementById('Asistentes');
+      const InvitadoCampo = document.getElementById('InvitadoCampo');
+
+      $('#asistencia').val('').change();
+      asistentes.innerHTML = '<option value="" disabled selected>Selecciona una cantidad</option>';
+      $('#Asistentes').val('').change();
+      $('#checkbox-container').hide();
+      $('#checkboxes').html('');
+
+      InvitadoCampo.value = Invitado;
+      document.getElementById('Reservados').value = invitados[Invitado] || 0;
+
+      if (invitados[Invitado]) {
+        const n = invitados[Invitado];
+        lugaresInfo.textContent = `Tienes ${n} lugares reservados.`;
+        for (let i = 0; i <= n; i++) {
+          asistentes.innerHTML += `<option value="${i}">${i}</option>`;
+        }
+      } else {
+        lugaresInfo.textContent = "Invitado no reconocido.";
+      }
+    }
+
+   function mostrarCheckboxes() {
+  const Invitado = $('#Invitado').val();
+  const nombres = nombresAcompanantes[Invitado] || [];
+  const cantidad = nombres.length;
+  const checkboxesContainer = $('#checkboxes');
+  checkboxesContainer.html('');  // Limpiar los checkboxes previos
+
+  if (cantidad > 0) {
+    $('#checkbox-container').show();  // Mostrar el contenedor
+    for (let i = 0; i < cantidad; i++) {
+      const nombre = nombres[i] || `Asistente ${i + 1}`;
+      checkboxesContainer.append(`
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="asistente${i + 1}" id="asistente${i + 1}">
+          <label class="form-check-label" for="asistente${i + 1}">${nombre}</label>
+        </div>
+      `);
+    }
+  } else {
+    $('#checkbox-container').hide();
+  }
+}
+
+function limitarSeleccionCheckboxes() {
+  const maxSeleccionados = parseInt($('#Asistentes').val(), 10);
+  const checkboxes = $('#checkboxes input[type="checkbox"]');
+
+  checkboxes.off('change'); // Elimina manejadores anteriores
+
+  checkboxes.on('change', function () {
+    const seleccionados = $('#checkboxes input[type="checkbox"]:checked').length;
+
+    if (seleccionados >= maxSeleccionados) {
+      // Deshabilitar los no seleccionados
+      checkboxes.not(':checked').prop('disabled', true);
+    } else {
+      // Habilitar todos si aún no se llega al máximo
+      checkboxes.prop('disabled', false);
+    }
   });
 }
 
+function NombresDeAcompañantes() {
+  const checkboxes = document.querySelectorAll('#checkboxes input[type="checkbox"]');
+  const nombresSeleccionados = [];
 
-function mostrarLugares() {
-  const nombre = $('#Nombre').val();
-  const lugaresInfo = document.getElementById('lugaresInfo');
-  const asistentes = document.getElementById('Asistentes');
-  const nombreCampo = document.getElementById('nombreCampo');
-
-  // Limpiar campos relacionados
-  $('#asistencia').val('').change();
-  asistentes.innerHTML = '<option value="" disabled selected>Selecciona una cantidad</option>';
-  $('#Asistentes').val('').change();
-
-  nombreCampo.value = nombre;
-
-  if (invitados[nombre]) {
-    const n = invitados[nombre];
-    lugaresInfo.textContent = `Tienes ${n} lugares reservados.`;
-    for (let i = 0; i <= n; i++) {
-      asistentes.innerHTML += `<option value="${i}">${i}</option>`;
+  checkboxes.forEach((checkbox, i) => {
+    if (checkbox.checked) {
+      const label = document.querySelector(`label[for="${checkbox.id}"]`);
+      if (label) nombresSeleccionados.push(label.textContent.trim());
     }
-  } else {
-    lugaresInfo.textContent = "Nombre no reconocido.";
-  }
+  });
+
+  document.getElementById('Nombres').value = nombresSeleccionados.join(', ');
 }
 
 
     $(document).ready(function() {
       rellenarSelect();
 
-      $('#Nombre').on('change', function () {
-        mostrarLugares();
-      });
+      $('#Invitado').on('change', mostrarLugares);
 
       $('#asistencia').on('change', function () {
         const asistira = $('#asistencia').val();
-        if(asistira=="0"){
-          $('#Asistentes').empty();
 
-// Agregamos la opción por defecto nuevamente
-$('#Asistentes').append('<option value="" selected disabled>Selecciona un nombre primero</option>');
-
+        if (asistira == "1") {
+          $('#asistencia-container').show();
+          $('#Asistentes').val('').change();
+        } else {
+          $('#asistencia-container').hide();
+          $('#Asistentes').empty().append('<option value="0" selected>0</option>').val("0").change();
+          $('#checkbox-container').hide();
+          $('#checkboxes').html('');
         }
-        asistira=="1" ?  $('#asistencia-container').show() :  $('#asistencia-container').hide();
       });
 
+     $('#Asistentes').on('change', function () {
+      const asistentes = document.getElementById('Asistentes').value;
+      if(asistentes=="0" || asistentes==null|| asistentes==""){
+        console.log("")
+      } else{
+        mostrarCheckboxes();
+      }
+  
+  limitarSeleccionCheckboxes();
+});
+
       $('#rsvp-form').on('submit', function(e) {
+        NombresDeAcompañantes();
         setTimeout(() => {
-          /* $('#thank-you-message').fadeIn(); */
           $('#rsvp-form').fadeOut();
         }, 500);
       });
