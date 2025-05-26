@@ -45,7 +45,7 @@
     .rsvp-title {
       font-weight: 700;
       font-size: 2.3rem;
-      color: #0d6efd;
+      color: #776243;
       margin-bottom: 2rem;
     }
 
@@ -61,7 +61,7 @@
 
     .form-select:focus, .form-control:focus {
       border-color: #0d6efd;
-      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      box-shadow: 0 0 0 0.25rem rgba(76, 138, 63, 0.25);
     }
 
     .btn-modern {
@@ -102,6 +102,16 @@
     #checkbox-container {
       display: none;
       margin-top: 1rem;
+    }
+
+    .btn-confirmar {
+      background-color: #776243;
+      color: white;
+      border-color: #776243;
+    }
+    .btn-confirmar:hover {
+      background-color: #5f5038; /* un poco más oscuro al hacer hover */
+      border-color: #5f5038;
     }
   </style>
 </head>
@@ -151,7 +161,7 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-modern w-100">Confirmar</button>
+            <button type="submit" class="btn btn-confirmar w-10">Confirmar</button>
           </form>
         </div>
       </div>
@@ -168,281 +178,215 @@
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
   <script>
-    const invitados = {
-      "Familia Rodríguez Alemán": 2,
-      "Familia Lazaro Sandoval": 6,
-      "Familia Rodríguez Fierro": 2,
-      "Antonio Sandoval Ávila": 1,
-      "Familia De Los Santos Sandoval": 3,
-      "Familia Velasco Sandoval": 4,
-      "Familia Sandoval Cruz": 3,
-      "Familia Sandoval Calles ": 2,
-      "Familia Ferreira ": 2,
-      "Familia Muse": 2,
-      "Familia Sandoval López": 2,
-      "Familia Sandoval Serrano": 2,
-      "Familia Sandoval Medrano": 2,
-      "Familia Sandoval Carachure": 4,
-      "Hiram Lazaro Ramirez": 1,
-      "Familia Lazaro Romero": 2,
-      "Familia Lazaro Vargas": 2,
-      "Familia Hernandez Lazaro": 2,
+const invitados = {
+    "Familia Rodríguez Alemán": ["Beatriz Alemán", "Raúl Rodríguez"],
+    "Familia Lazaro Sandoval": ["Faviola Sandoval", "Ervey Lazaro", "Ervey Jr Lazaro", "Marisol Naranjo", "Daiana Lazaro", "Emily Lazaro"],
+    "Familia Rodríguez Ramos": ["Raúl Rodríguez", "Ivette Ramos"],
+    "Antonio Sandoval Ávila": ["Antonio Sandoval Ávila"],
+    "Familia De Los Santos Sandoval": ["Irma Sandoval", "Josué de los Santos", "Josué Jr. de los Santos"],
+    "Familia Velasco Sandoval": ["Betty Sandoval", "Armando Velasco", "Armando Jr Velasco", "Regina Velasco"],
+    "Familia Sandoval Cruz": ["Sara Cruz", "Josselin Sandoval", "Karen Sandoval"],
+    "Familia Sandoval Calles ": ["Brayan Sandoval", "Jaris Calles"],
+    "Familia Ferreira ": ["Beiry Ferreira", "Ben Ferreira"],
+    "Familia Muse": ["Jacquelyn Muse", "Trent Muse"],
+    "Familia Sandoval López": ["Antonio Sandoval", "Lizania López", "Aldo Sandoval", "Tony Sandoval", "Fernando Sandoval"],
+    "Familia Sandoval Serrano": ["Alfredo Sandoval", "Omaira Serrano"],
+    "Familia Sandoval Medrano": ["Benjamin Sandoval", "Isabel Medrano", "Emiliano Sandoval", "Isabela Sandoval"],
+    "Familia Sandoval Carachure": ["Abel Sandoval", "Ana Carachure", "Anabel Sandoval", "Sofía Sandoval"],
+    "Hiram Lazaro de la Fuente": ["Hiram Lazaro de la Fuente"],
+    "Familia Lazaro Romero": ["Hiram Lazaro", "Mayra Romero"],
+    "Familia Lazaro Vargas": ["Ruben Lazaro", "Pery Vargas", "Alexa Lazaro", "Victoria Lazaro", "Ruben Jr. Lazaro"],
+    "Familia Hernández Lazaro": ["Elina Lazaro", "Pedro Hernández"],
 
-      "Familia Estrada Alemán": 2,
-      "Familia Martínez Estrada": 2,
-      "Familia Medina Estrada": 2,
-      "Familia Durán Estrada": 2,
-      "Familia Velasco Alemán": 3,
-      "Familia Mendez Velasco": 2,
-      "Familia Mondragon Alemán": 3,
-      "Familia Mondragon Omaña": 2,
-      "Familia Mendez Alemán": 3,
-      "Ivan Mendez": 2,
-      "Familia Alemán Infante": 5,
-      "Gonzalo Alemán": 1,
-      "Ruth Alemán": 1,
-      "Familia Rodríguez Antonio": 2,
-      "Familia Rodriguez Rodríguez": 2,
-      "Familia Rodríguez Robles": 2,
-      "Alejandra Robles": 1,
-      "Ivette Rodríguez": 2,
-      "Familia Rodríguez Gomez": 3,
-      "Familia Neira Ramirez": 2,
+    "Familia Estrada Alemán": ["Paula Alemán", "Daniel Estrada"],
+    "Familia Martínez Estrada": ["Irving Martínez", "Paola Estrada", "Paulette Martínez"],
+    "Familia Medina Estrada": ["Ilse Estrada", "Israel Medina"],
+    "Familia Durán Estrada": ["Daniela Estrada", "Daniel Durán"],
+    "Familia Velasco Alemán": ["Rita Alemán", "Israel Velasco", "Libni Velasco"],
+    "Familia Mendez Velasco": ["Elaine Velasco", "Joel Mendez"],
+    "Familia Mondragon Alemán": ["Miguel Mondragon", "Julia Alemán", "Alan Mondragon"],
+    "Familia Mondragon Omaña": ["Miguel Mondragon", "Esli Omaña"],
+    "Familia Mendez Alemán": ["Ever Mendez", "Adela Alemán", "Stephanie Mendez"],
+    "Ivan Mendez": ["Iván Mendez", "Carolina Castro"],
+    "Familia Alemán Infante": ["Carlos Alemán", "Erika Infante", "Angelica Alemán", "Karla Alemán", "Gonzalo Alemán"],
+    "Gonzalo Alemán": ["Gonzalo Alemán"],
+    "Ruth Alemán": ["Ruth Alemán"],
+    "Familia Rodríguez Antonio": ["Isabel Rodríguez", "Paulina Gomez"],
+    "Familia Rodriguez Rodríguez": ["Freddy Rodríguez", "Zulema Rodríguez"],
+    "Familia Rodríguez Reyes": ["Arturo Rodríguez", "Lady Reyes"],
+    "Alejandra Robles": ["Alejandra Robles"],
+    "Familia Mendez Rodríguez": ["Ivette Rodríguez","Hazael Mendez"],
+    "Familia Rodríguez Gomez": ["Daniel Rodríguez", "Leticia Gomez", "Edson Rodríguez"],
+    "Familia Neira Ramirez": ["Fernando Neira", "Ilsi Ramirez"],
+    "Familia Semanivsky": ["Pavel Semanivsky", "Natasha Semanivska"],
 
-  "Antonio Hernandez": 1,
-  "Ismael Acuña": 1,
-  "Andrea Garduño y Tito": 2,
-  "Christian Arvizu": 1,
-  "Javier Guichard": 1,
-  "David Guichard": 1,
-  "Samuel Torres": 1,
-  "Karla Gil": 1,
-  "Eduardo Bejarano": 2,
-  "Luis Montalvo": 2,
-  "Harry Vargas": 2,
-  "Mauricio Neira": 1,
-  "Karla Villegas": 1,
-  "Jared Torres": 2,
-  "Jared Velazquez": 1,
-  "Jorge Tellez y Saraí Espinoza": 2,
-  "Aldon Lewis": 1,
-  "Keston Roberts": 1,
-  "Micaiah Illidge": 1,
-  "Jessica Burelo y Carlos Quiroz": 2,
-  "Susana Serrano": 1,
-  "Cristina Ríos y Humberto Chavez": 2,
-  "Jairo Díaz y Sarah Díaz": 2,
-  "Baneli Mendoza y Juan Ocampo": 2,
-  "Liz Ríos": 1,
-  "Brisaida Velazquez": 1,
-  "Yuleidi Ramirez": 1
-    };
-
-    const nombresAcompanantes = {
-  "Familia Rodríguez Alemán": ["Beatriz", "Raúl"],
-  "Familia Lazaro Sandoval": ["Fabiola", "Ervey", "Ervey Jr", "Marisol", "Daiana", "Emily"],
-  "Familia Rodríguez Fierro": ["Raúl", "Ivette"],
-  "Antonio Sandoval Ávila": ["Antonio Sandoval Ávila"],
-  "Familia De Los Santos Sandoval": ["Irma", "Josué", "Josué (Hijo)"],
-  "Familia Velasco Sandoval": ["Betty", "Armando", "Armando (Hijo)", "Regina"],
-  "Familia Sandoval Cruz": ["Sara", "Josselin", "Karen"],
-  "Familia Sandoval Calles ": ["Brayan", "Jaris"],
-  "Familia Ferreira ": ["Beiry", "Ben"],
-  "Familia Muse": ["Jacquelyn", "Esposo"],
-  "Familia Sandoval López": ["Antonio", "Lizania", "Aldo", "Tony", "Fernando"],
-  "Familia Sandoval Serrano": ["Alfredo", "Omaira", "Alfredo (Hijo)", "Valentina"],
-  "Familia Sandoval Medrano": ["Benjamin", "Isabel", "Emiliano", "Isabela"],
-  "Familia Sandoval Carachure": ["Abel", "Ana", "Anabel", "Hija 2"],
-  "Hiram Lazaro Ramirez": ["Hiram"],
-  "Familia Lazaro Romero": ["Hiram", "Mayra"],
-  "Familia Lazaro Vargas": ["Ruben", "Pery", "Alexa", "Victoria", "Rubem (Hijo)"],
-  "Familia Hernandez Lazaro": ["Elina", "Esposo"],
-
-  "Familia Estrada Alemán": ["Paula", "Daniel"],
-  "Familia Martínez Estrada": ["Irving", "Paola", "Paulette", "Andy"],
-  "Familia Medina Estrada": ["Ilse", "Israel"],
-  "Familia Durán Estrada": ["Daniela", "Daniel"],
-  "Familia Velasco Alemán": ["Rita", "Israel", "Libni"],
-  "Familia Mendez Velasco": ["Elaine", "Joel"],
-  "Familia Mondragon Alemán": ["Miguel", "Julia", "Alan"],
-  "Familia Mondragon Omaña": ["Miguel", "Esli"],
-  "Familia Mendez Alemán": ["Ever", "Adela", "Stephanie"],
-  "Ivan Mendez": ["Iván", "Caro"],
-  "Familia Alemán Infante": ["Carlos", "Erika", "Angelica", "Karla", "Gonzalo"],
-  "Gonzalo Alemán": ["Abuelo Gonzalo"],
-  "Ruth Alemán": ["Ruth"],
-  "Familia Rodríguez Antonio": ["Isabel", "Paulina"],
-  "Familia Rodriguez Rodríguez": ["Freddy", "Esposa"],
-  "Familia Rodríguez Robles": ["Arturo", "Lady"],
-  "Alejandra Robles": ["Alejandra"],
-  "Ivette Rodríguez": ["Ivette"],
-  "Familia Rodríguez Gomez": ["Daniel", "Leticia", "Edson"],
-  "Familia Neira Ramirez": ["Fernando", "Ilsi"],
-
-  "Antonio Hernandez": ["Antonio"],
-  "Ismael Acuña": ["Ismael"],
-  "Andrea Garduño y Tito": ["Andrea Garduño", "Tito"],
-  "Christian Arvizu": ["Christian"],
-  "Javier Guichard": ["Javier Guichard"],
-  "David Guichard": ["David Guichard"],
-  "Samuel Torres": ["Samuel"],
-  "Karla Gil": ["Karla"],
-  "Eduardo Bejarano": ["Eduardo","Mayra"],
-  "Luis Montalvo": ["Luis","Dariana"],
-  "Harry Vargas": ["Harry","Lily"],
-  "Mauricio Neira": ["Mauricio"],
-  "Karla Villegas": ["Karla"],
-  "Jared Torres": ["Jared","Sandy"],
-  "Jared Velazquez": ["Jared"],
-  "Jorge Tellez y Saraí Espinoza": ["Jorge Tellez", "Saraí Espinoza"],
-  "Aldon Lewis": ["Aldon"],
-  "Keston Roberts": ["Keston"],
-  "Micaiah Illidge": ["Micaiah"],
-  "Jessica Burelo y Carlos Quiroz": ["Jessica Burelo", "Carlos Quiroz"],
-  "Susana Serrano": ["Susana"],
-  "Cristina Ríos y Humberto Chavez": ["Cristina Ríos", "Humberto Chavez"],
-  "Jairo Díaz y Sarah Díaz": ["Jairo Díaz", "Sarah Díaz"],
-  "Baneli Mendoza y Juan Ocampo": ["Baneli Mendoza", "Juan Ocampo"],
-  "Liz Ríos": ["Liz"],
-  "Brisaida Velazquez": ["Brisaida"],
-  "Yuleidi Ramirez": ["Yuleidi"]
-
+    "Antonio Hernández": ["Antonio Hernández"],
+    "Ismael Acuña": ["Ismael Acuña","Paola Aguilar"],
+    "Familia Montejo Garduño": ["Andrea Garduño", "Tito Montejo"],
+    "Christian Arvizu": ["Christian Arvizu","Zurysaddai Ocaña"],
+    "Javier Guichard": ["Javier Guichard"],
+    "David Guichard": ["David Guichard"],
+    "Samuel Torres": ["Samuel Torres","Karla Gil"],
+    "Eduardo Bejarano": ["Eduardo Bejarano", "Mayra Gomez"],
+    "Luis Montalvo": ["Luis Montalvo", "Dariana Treviño"],
+    "Harry Vargas": ["Harry Vargas", "Lily Balboa"],
+    "Yamilet Villazul": ["Yamilet Villazul"],
+    "Mauricio Neira": ["Mauricio Neira"],
+    "Karla Villegas": ["Karla Villegas"],
+    "Jared Torres": ["Jared Torres", "Sandy Gastelum"],
+    "Familia Rodríguez Sauceda": ["Cecilia Sauceda", "Alejandro Rodríguez"],
+    "Jared Velazquez": ["Jared Velazquez"],
+    "Familia Tellez Espinoza": ["Jorge Tellez", "Saraí Espinoza"],
+    "Aldon Lewis": ["Aldon Lewis"],
+    "Keston Roberts": ["Keston Roberts"],
+    "Micaiah Illidge": ["Micaiah Illidge"],
+    "Familia Quiroz Burelo": ["Jessica Burelo", "Carlos Quiroz"],
+    "Susana Serrano": ["Susana Serrano"],
+    "Familia Chavez Ríos": ["Cristina Ríos", "Humberto Chavez"],
+    "Familia Díaz": ["Jairo Díaz", "Sarah Díaz"],
+    "Familia Ocampo Mendoza": ["Baneli Mendoza", "Juan Ocampo"],
+    "Liz Ríos": ["Liz Ríos"],
+    "Brisaida Velazquez": ["Brisaida Velazquez"],
+    "Yuleidi Ramírez": ["Yuleidi Ramírez"]
 };
 
-    function rellenarSelect() {
-      const select = document.getElementById('Invitado');
-      select.innerHTML = '<option value="" disabled selected>Selecciona un invitado</option>';
+function rellenarSelect() {
+    const select = document.getElementById('Invitado');
+    select.innerHTML = '<option value="" disabled selected>Selecciona un invitado</option>';
 
-      Object.keys(invitados).forEach(Invitado => {
+    Object.keys(invitados).forEach(Invitado => {
         const option = document.createElement('option');
         option.value = Invitado;
         option.textContent = Invitado;
         select.appendChild(option);
-      });
+    });
 
-      $('#Invitado').select2({ width: '100%' });
-    }
-
-    function mostrarLugares() {
-      const Invitado = $('#Invitado').val();
-      const lugaresInfo = document.getElementById('lugaresInfo');
-      const asistentes = document.getElementById('Asistentes');
-      const InvitadoCampo = document.getElementById('InvitadoCampo');
-
-      $('#asistencia').val('').change();
-      asistentes.innerHTML = '<option value="" disabled selected>Selecciona una cantidad</option>';
-      $('#Asistentes').val('').change();
-      $('#checkbox-container').hide();
-      $('#checkboxes').html('');
-
-      InvitadoCampo.value = Invitado;
-      document.getElementById('Reservados').value = invitados[Invitado] || 0;
-
-      if (invitados[Invitado]) {
-        const n = invitados[Invitado];
-        lugaresInfo.textContent = `Tienes ${n} lugares reservados.`;
-        for (let i = 0; i <= n; i++) {
-          asistentes.innerHTML += `<option value="${i}">${i}</option>`;
-        }
-      } else {
-        lugaresInfo.textContent = "Invitado no reconocido.";
-      }
-    }
-
-   function mostrarCheckboxes() {
-  const Invitado = $('#Invitado').val();
-  const nombres = nombresAcompanantes[Invitado] || [];
-  const cantidad = nombres.length;
-  const checkboxesContainer = $('#checkboxes');
-  checkboxesContainer.html('');  // Limpiar los checkboxes previos
-
-  if (cantidad > 0) {
-    $('#checkbox-container').show();  // Mostrar el contenedor
-    for (let i = 0; i < cantidad; i++) {
-      const nombre = nombres[i] || `Asistente ${i + 1}`;
-      checkboxesContainer.append(`
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="asistente${i + 1}" id="asistente${i + 1}">
-          <label class="form-check-label" for="asistente${i + 1}">${nombre}</label>
-        </div>
-      `);
-    }
-  } else {
-    $('#checkbox-container').hide();
-  }
+    $('#Invitado').select2({
+        width: '100%'
+    });
 }
 
-function limitarSeleccionCheckboxes() {
-  const maxSeleccionados = parseInt($('#Asistentes').val(), 10);
-  const checkboxes = $('#checkboxes input[type="checkbox"]');
+function mostrarLugares() {
+    const Invitado = $('#Invitado').val();
+    const lugaresInfo = document.getElementById('lugaresInfo');
+    const asistentes = document.getElementById('Asistentes');
+    const InvitadoCampo = document.getElementById('InvitadoCampo');
 
-  checkboxes.off('change'); // Elimina manejadores anteriores
+    $('#asistencia').val('').change();
+    asistentes.innerHTML = '<option value="" disabled selected>Selecciona una cantidad</option>';
+    $('#Asistentes').val('').change();
+    $('#checkbox-container').hide();
+    $('#checkboxes').html('');
 
-  checkboxes.on('change', function () {
-    const seleccionados = $('#checkboxes input[type="checkbox"]:checked').length;
+    InvitadoCampo.value = Invitado;
 
-    if (seleccionados >= maxSeleccionados) {
-      // Deshabilitar los no seleccionados
-      checkboxes.not(':checked').prop('disabled', true);
+    const acompañantes = invitados[Invitado];
+    const n = acompañantes ? acompañantes.length : 0;
+    document.getElementById('Reservados').value = n;
+
+    if (n > 0) {
+        lugaresInfo.textContent = `Tienes ${n} lugares reservados.`;
+        for (let i = 0; i <= n; i++) {
+            asistentes.innerHTML += `<option value="${i}">${i}</option>`;
+        }
     } else {
-      // Habilitar todos si aún no se llega al máximo
-      checkboxes.prop('disabled', false);
+        lugaresInfo.textContent = "Invitado no reconocido.";
     }
-  });
+}
+
+function mostrarCheckboxes() {
+    const Invitado = $('#Invitado').val();
+    const nombres = invitados[Invitado] || [];
+    const checkboxesContainer = $('#checkboxes');
+    checkboxesContainer.html('');
+
+    nombres.forEach((nombre, index) => {
+        const checkbox = `
+      <div>
+        <input type="checkbox" id="asistente_${index}" name="asistentes[]" value="${nombre}">
+        <label for="asistente_${index}">${nombre}</label>
+      </div>
+    `;
+        checkboxesContainer.append(checkbox);
+    });
+
+    if (nombres.length > 0) {
+        $('#checkbox-container').show();
+    }
+}
+
+
+function limitarSeleccionCheckboxes() {
+    const maxSeleccionados = parseInt($('#Asistentes').val(), 10);
+    const checkboxes = $('#checkboxes input[type="checkbox"]');
+
+    checkboxes.off('change'); // Elimina manejadores anteriores
+
+    checkboxes.on('change', function() {
+        const seleccionados = $('#checkboxes input[type="checkbox"]:checked').length;
+
+        if (seleccionados >= maxSeleccionados) {
+            // Deshabilitar los no seleccionados
+            checkboxes.not(':checked').prop('disabled', true);
+        } else {
+            // Habilitar todos si aún no se llega al máximo
+            checkboxes.prop('disabled', false);
+        }
+    });
 }
 
 function NombresDeAcompañantes() {
-  const checkboxes = document.querySelectorAll('#checkboxes input[type="checkbox"]');
-  const nombresSeleccionados = [];
+    const checkboxes = document.querySelectorAll('#checkboxes input[type="checkbox"]');
+    const nombresSeleccionados = [];
 
-  checkboxes.forEach((checkbox, i) => {
-    if (checkbox.checked) {
-      const label = document.querySelector(`label[for="${checkbox.id}"]`);
-      if (label) nombresSeleccionados.push(label.textContent.trim());
-    }
-  });
+    checkboxes.forEach((checkbox, i) => {
+        if (checkbox.checked) {
+            const label = document.querySelector(`label[for="${checkbox.id}"]`);
+            if (label) nombresSeleccionados.push(label.textContent.trim());
+        }
+    });
 
-  document.getElementById('Nombres').value = nombresSeleccionados.join(', ');
+    document.getElementById('Nombres').value = nombresSeleccionados.join(', ');
 }
 
 
-    $(document).ready(function() {
-      rellenarSelect();
+$(document).ready(function() {
+    rellenarSelect();
 
-      $('#Invitado').on('change', mostrarLugares);
+    $('#Invitado').on('change', mostrarLugares);
 
-      $('#asistencia').on('change', function () {
+    $('#asistencia').on('change', function() {
         const asistira = $('#asistencia').val();
 
         if (asistira == "1") {
-          $('#asistencia-container').show();
-          $('#Asistentes').val('').change();
+            $('#asistencia-container').show();
+            $('#Asistentes').val('').change();
         } else {
-          $('#asistencia-container').hide();
-          $('#Asistentes').empty().append('<option value="0" selected>0</option>').val("0").change();
-          $('#checkbox-container').hide();
-          $('#checkboxes').html('');
+            $('#asistencia-container').hide();
+            $('#Asistentes').empty().append('<option value="0" selected>0</option>').val("0").change();
+            $('#checkbox-container').hide();
+            $('#checkboxes').html('');
         }
-      });
+    });
 
-     $('#Asistentes').on('change', function () {
-      const asistentes = document.getElementById('Asistentes').value;
-      if(asistentes=="0" || asistentes==null|| asistentes==""){
-        console.log("")
-      } else{
-        mostrarCheckboxes();
-      }
-  
-  limitarSeleccionCheckboxes();
-});
+    $('#Asistentes').on('change', function() {
+        const asistentes = document.getElementById('Asistentes').value;
+        if (asistentes == "0" || asistentes == null || asistentes == "") {
+            console.log("")
+        } else {
+            mostrarCheckboxes();
+        }
 
-      $('#rsvp-form').on('submit', function(e) {
+        limitarSeleccionCheckboxes();
+    });
+
+    $('#rsvp-form').on('submit', function(e) {
         NombresDeAcompañantes();
         setTimeout(() => {
-          $('#rsvp-form').fadeOut();
+            $('#rsvp-form').fadeOut();
         }, 500);
-      });
     });
+});
   </script>
 </body>
 </html>
